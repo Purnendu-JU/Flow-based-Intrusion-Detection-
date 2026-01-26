@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+
+  iot_device:
+    build: ./iot_device
+    container_name: iot_device
+    volumes:
+      - ./traffic_data:/shared
+    networks:
+      - iot_net
+
+  iot_server:
+    build: ./iot_server
+    container_name: iot_server
+    networks:
+      - iot_net
+    ports:
+      - "8080:8080"
+
+networks:
+  iot_net:
+    driver: bridge
+
+volumes:
+  traffic_data:
