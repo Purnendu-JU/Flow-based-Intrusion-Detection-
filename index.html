@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>IoT IDS Dashboard</title>
+  <style>
+    body { font-family: Arial; text-align: center; }
+
+    .node {
+      display: inline-block;
+      margin: 40px;
+      padding: 20px;
+      border: 2px solid black;
+      width: 120px;
+    }
+
+    #network {
+      position: relative;
+      height: 300px;
+    }
+
+    .packet {
+      width: 10px;
+      height: 10px;
+      background: green;
+      position: absolute;
+      border-radius: 50%;
+      animation: move 2s linear infinite;
+    }
+
+    @keyframes move {
+      from { left: 10%; }
+      to { left: 80%; }
+    }
+
+    .blocked {
+      background: red !important;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🚀 IoT Intrusion Detection System</h1>
+
+<div>
+  <div class="node">IoT Device</div>
+  <div class="node">Gateway</div>
+  <div class="node">Attacker</div>
+</div>
+
+<div id="network">
+  <div id="packets"></div>
+</div>
+
+<h2 id="status">Loading...</h2>
+
+<script>
+async function fetchStatus() {
+    try {
+        const res = await fetch("http://localhost:8000/status.json");
+        const data = await res.json();
+
+        document.getElementById("status").innerText =
+            `NORMAL: ${data.normal} | DOS: ${data.dos} | RECON: ${data.recon}`;
+
+        const container = document.getElementById("packets");
+        container.innerHTML = "";
+
+        for (let i = 0; i < 6; i++) {
+            let p = document.createElement("div");
+            p.className = "packet";
+
+            if (data.dos > 0) {
+                p.classList.add("blocked");
+            }
+
+            p.style.top = (50 + i * 25) + "px";
+            container.appendChild(p);
+        }
+
+    } catch (err) {
+        console.log("Error fetching status:", err);
+    }
+}
+
+setInterval(fetchStatus, 2000);
+</script>
+
+</body>
+</html>
